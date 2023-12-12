@@ -1,0 +1,105 @@
+#ПРАКТИЧЕСКОЕ ЗАДАНИЕ№ 13
+#Кулагина Екатерина 3.1.51
+
+#Часть 1
+
+#Переписали данные из таблицы с заданием
+time_months=c(14,20,24,25,28,30,36,37,38,42,43,48,48)
+censored=c(0,0,0,1,0,0,1,1,0,1,1,0,1) # 1( в задании +) - человек выбыл, 0 - умер 
+num_peop=c(1,2,3,1,1,2,1,1,2,1,1,2,62)
+group_number = c(1,1,1,1,1,1,1,1,1,1,1,1,1) # Группа с высокой оценкой по шкале повседневной работы по дому
+table1= data.frame(time_months, censored, num_peop, group_number)
+
+reptimes = num_peop
+num_rep = rep(1:nrow(table1), reptimes) #Вектор, показывающий, сколько раз должна повторяться каждая строка 
+dupdf = table1[num_rep, ]          
+ID = (1:nrow(dupdf)) #Присвоили уникальный номер каждому человеку
+table_group_1 = data.frame(ID,dupdf) #Конечный дата фрейм для первой группы 
+
+time_months2=c(6,12,18,24,26,28,32,34,36,38,42,46,47,48,48)
+censored2=c(0,0,0,0,1,0,0,1,0,1,0,1,0,0,1)
+num_peop2=c(2,2,4,1,1,4,4,2,4,3,3,2,3,2,23)
+group_number2 = rep(2, 15) # Группа с низкой оценкой по шкале повседневной работы по дому
+table2 = data.frame(time_months2, censored2, num_peop2, group_number2)
+
+reptimes2 = num_peop2
+num_rep2 = rep(1:nrow(table2), reptimes2) 
+dupdf2 = table2[num_rep2, ]
+ID2 = (nrow(dupdf)+1:nrow(dupdf2))
+table_group_2 = data.frame(ID2,dupdf2)
+names(table_group_2)= c( "ID", "time_months", "censored", "num_peop", "group_number")
+
+table = rbind(table_group_1, table_group_2)
+
+fit = survfit(Surv(time_months,censored) ~ group_number, data = table)
+ggsurvplot(fit, data = table,  xlab = "Time", ylab = "Overall survival probability", conf.int = TRUE, pval = TRUE) 
+#Кривые выживаемости частично совпадают
+
+#Оцените статистическую значимость различий в выживаемости двух групп
+survdiff(Surv(time_months,censored)~ group_number, table, rho=0)
+
+#Chisq= 1.7  on 1 degrees of freedom, p= 0.2 
+#Так как p= 0.2 > 0.05, то мы не можем точно утверждать, что между группами есть статиcтически значимая разница в выживаемости
+
+#Часть 2 
+
+time_months3 = c(1,2,3,4,5,6,7,8,9,10,11,12,13,15,16,20,21,25,28,34,36,48,56,62,84)
+censored3 = c(0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,1,0,0,0)
+num_peop3 = c(1,1,3,1,1,1,2,1,1,1,2,2,1,1,3,3,1,1,1,1,1,1,1,1,1)
+table3 = data.frame(time_months3, censored3, num_peop3)
+
+reptimes3 = num_peop3
+num_rep3 = rep(1:nrow(table3), reptimes3)
+dupdf3 = table3[num_rep3, ]
+ID3 = (1:nrow(dupdf3))
+table_group_3 = data.frame(ID3,dupdf3)
+table_group_3
+
+#Постройте кривую выживаемости и ее 95% доверительную область.
+fit2 = survfit(Surv(time_months3,censored3) ~ 1, data = table_group_3)
+ggsurvplot(fit2, data = table,  xlab = "Months after operation", ylab = "Overall survival probability", conf.int = TRUE, legend = "none") 
+
+#Часть 3
+
+time_months4=c(2,4,6,8,10,12,14,16,18,22,24,30,36,52,54,56,60,60)
+censored4=c(0,0,0,0,1,0,0,1,0,1,0,0,0,1,0,0,0,1) # 1( в задании +) - человек выбыл, 0 - умер 
+num_peop4=c(3,4,3,4,1,2,3,1,2,1,1,2,1,1,1,1,1,18)
+group_num = rep(1, 18) # Период 1975-1979
+table4= data.frame(time_months4, censored4, num_peop4, group_num)
+
+reptimes4 = num_peop4
+num_rep4 = rep(1:nrow(table4), reptimes4) #Вектор, показывающий, сколько раз должна повторяться каждая строка 
+dupdf4 = table4[num_rep4, ]          
+ID4 = (1:nrow(dupdf4)) #Присвоили уникальный номер каждому человеку
+table_group_4 = data.frame(ID4,dupdf4) 
+table_group_4
+
+time_months5=c(2,4,6,8,12,14,18,20,22,24,30,36,48,54,56,60,60)
+censored5=c(0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,1)
+num_peop5=c(4,1,3,10,4,3,1,1,2,1,2,3,2,1,2,1,9)
+group_num2 = rep(2, 17) # Период 1980-1984
+table5 = data.frame(time_months5, censored5, num_peop5, group_num2)
+
+reptimes5 = num_peop5
+num_rep5 = rep(1:nrow(table5), reptimes5) 
+dupdf5 = table5[num_rep5, ]
+ID5 = (nrow(dupdf4)+1:nrow(dupdf5))
+table_group_5 = data.frame(ID5,dupdf5)
+table_group_5
+
+names(table_group_5)= c("ID4", "time_months4", "censored4", "num_peop4", "group_num")
+table5 = rbind(table_group_4, table_group_5)
+table5
+
+# Постройте кривые выживаемости и 95% доверительные интервалы
+#Найдите медианы выживаемости
+#Оцените статистическую значимость различий выживаемости
+
+fit3 = survfit(Surv(time_months4, censored4)~ group_num, data = table5)
+ggsurvplot(fit3, data = table5,  xlab = "Months", ylab = "Overall survival probability",
+           conf.int = TRUE, surv.median.line = "hv", palette = "aaas") 
+
+survdiff(Surv(time_months4,censored4)~ group_num, table5, rho=0)
+
+#Chisq= 0.1  on 1 degrees of freedom, p= 0.8 
+#Так как p= 0.8 > 0.05, то мы не можем точно утверждать, что между группами есть статиcтически значимая разница в выживаемости
